@@ -221,7 +221,70 @@ const GitHubCalendar: React.FC = () => {
     });
   };
 
-  const calculateLongestStreak = (contributionsData: Array<{date: string, contributions: number, level: number}> | null): number => {
+  const getWeeksData = (data: ContributionDay[]): (ContributionDay | null)[][] => {
+    const weeks: (ContributionDay | null)[][] = [];
+    const today = new Date();
+    const startOfYear = new Date(today.getFullYear(), 0, 1);
+    
+    // Find the first Sunday of the year or before
+    const firstSunday = new Date(startOfYear);
+    const dayOfWeek = startOfYear.getDay();
+    if (dayOfWeek !== 0) {
+      firstSunday.setDate(startOfYear.getDate() - dayOfWeek);
+    }
+    
+    let currentWeek: (ContributionDay | null)[] = [];
+    let currentDate = new Date(firstSunday);
+    
+    for (let i = 0; i < 53; i++) { // 53 weeks in a year
+      currentWeek = [];
+      
+      for (let j = 0; j < 7; j++) { // 7 days in a week
+        const dateStr = currentDate.toISOString().split('T')[0];
+        const dayData = data.find(day => day.date === dateStr);
+        
+        // Only include days that are in the current year
+        if (currentDate.getFullYear() === today.getFullYear()) {
+          currentWeek.push(dayData || null);
+        } else {
+          currentWeek.push(null);
+        }
+        
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+      
+      weeks.push(currentWeek);
+    }
+    
+    return weeks;
+  };
+
+  const getMonthLabels = (): string[] => {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const monthLabels: string[] = [];
+    
+    // Calculate approximate positions for month labels
+    for (let i = 0; i < 12; i++) {
+      const monthStart = new Date(currentYear, i, 1);
+      const dayOfYear = Math.floor((monthStart.getTime() - new Date(currentYear, 0, 1).getTime()) / (1000 * 60 * 60 * 24));
+      const weekOfYear = Math.floor(dayOfYear / 7);
+      
+      if (weekOfYear < 52) {
+        monthLabels[Math.min(weekOfYear, 11)] = months[i];
+      }
+    }
+    
+    // Fill in empty slots
+    const result: string[] = [];
+    for (let i = 0; i < 12; i++) {
+      result.push(monthLabels[i] || '');
+    }
+    
+    return result;
+  };
     if (!contributionsData) return 0;
     
     let longestStreak = 0;
@@ -289,18 +352,48 @@ const GitHubCalendar: React.FC = () => {
           </h3>
           
           <div className="overflow-x-auto pb-4">
-            <div className="min-w-full">
-              <div className="grid grid-cols-53 gap-1">
-                {contributionsData?.map((day, index) => (
-                  <div
-                    key={index}
-                    className={`w-3 h-3 rounded-sm border ${getColorClass(day.level)} hover:ring-2 hover:ring-purple-400 transition-all duration-200 cursor-pointer relative group`}
-                  >
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10 pointer-events-none">
-                      {day.contributions} contributions on {formatDate(day.date)}
+            <div className="flex">
+              {/* Days of week labels */}
+              <div className="flex flex-col justify-between text-xs text-gray-400 mr-2 py-2">
+                <span>Sun</span>
+                <span>Mon</span>
+                <span>Tue</span>
+                <span>Wed</span>
+                <span>Thu</span>
+                <span>Fri</span>
+                <span>Sat</span>
+              </div>
+              
+              {/* Calendar grid */}
+              <div className="flex-1">
+                {/* Month labels */}
+                <div className="flex mb-2 text-xs text-gray-400">
+                  {getMonthLabels().map((month, index) => (
+                    <div key={index} className="flex-1 text-left" style={{minWidth: '14px'}}>
+                      {month}
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
+                
+                {/* Contribution squares arranged in weeks */}
+                <div className="flex gap-1">
+                  {getWeeksData(contributionsData || []).map((week, weekIndex) => (
+                    <div key={weekIndex} className="flex flex-col gap-1">
+                      {week.map((day, dayIndex) => (
+                        <div
+                          key={`${weekIndex}-${dayIndex}`}
+                          className={`w-3 h-3 rounded-sm border ${day ? getColorClass(day.level) : 'bg-slate-800 border-slate-700'} hover:ring-2 hover:ring-purple-400 transition-all duration-200 cursor-pointer relative group`}
+                        >
+                          {day && (
+                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10 pointer-events-none">
+                              {day.contributions} contributions on {formatDate(day.date)}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
