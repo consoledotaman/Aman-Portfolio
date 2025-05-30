@@ -29,9 +29,9 @@ export function SplineSceneBasic() {
 
         if (charIndex + 1 === currentRole.length) {
           setIsDeleting(true);
-          setTypingSpeed(1500); // pause after typing full word
+          setTypingSpeed(1500); 
         } else {
-          setTypingSpeed(100); // typing speed
+          setTypingSpeed(100); 
         }
       } else {
         setText(currentRole.slice(0, charIndex - 1));
@@ -40,9 +40,9 @@ export function SplineSceneBasic() {
         if (charIndex - 1 === 0) {
           setIsDeleting(false);
           setRoleIndex((prev) => (prev + 1) % roles.length);
-          setTypingSpeed(300); // small pause before next word
+          setTypingSpeed(300); 
         } else {
-          setTypingSpeed(50); // deleting speed
+          setTypingSpeed(50); 
         }
       }
     };

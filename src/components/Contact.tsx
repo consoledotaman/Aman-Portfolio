@@ -12,7 +12,7 @@ const Contact = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Form submitted:', formData);
-    // Handle form submission here
+   
     setFormData({ name: '', email: '', message: '' });
   };
 
@@ -125,7 +125,7 @@ const Contact = () => {
             </div>
           </div>
 
-          {/* Contact Form */}
+          
           <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-8 border border-slate-700">
             <h3 className="text-2xl font-semibold text-white mb-6">Send Message</h3>
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -188,7 +188,7 @@ const Contact = () => {
           </div>
         </div>
 
-        {/* Footer */}
+        
         <div className="text-center mt-16 pt-8 border-t border-slate-700">
           <p className="text-gray-400">
             © 2025 Aman Raj. Built with ❤️ using React.js
