@@ -191,7 +191,7 @@ const Contact = () => {
         {/* Footer */}
         <div className="text-center mt-16 pt-8 border-t border-slate-700">
           <p className="text-gray-400">
-            © 2024 Aman Raj. Built with ❤️ using React.js
+            © 2025 Aman Raj. Built with ❤️ using React.js
           </p>
         </div>
       </div>
