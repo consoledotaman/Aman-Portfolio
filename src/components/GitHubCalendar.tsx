@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, GitBranch, Star, GitCommit, ExternalLink, Loader } from 'lucide-react';
 
-// TypeScript interfaces
 interface ContributionDay {
   date: string;
   contributions: number;
@@ -26,59 +25,43 @@ const GitHubCalendar: React.FC = () => {
   const [userStats, setUserStats] = useState<UserStats | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  
-  const username: string = 'consoledotaman';
-  const token: string | undefined = process.env.REACT_APP_GITHUB_TOKEN;
+
+  const username = 'consoledotaman';
+  const token = process.env.REACT_APP_GITHUB_TOKEN;
 
   useEffect(() => {
     const fetchGitHubData = async () => {
       try {
-        // Fetch user stats from GitHub API
         const userResponse = await fetch(`https://api.github.com/users/${username}`, {
-          headers: token ? { 'Authorization': `token ${token}` } : {}
+          headers: token ? { Authorization: `token ${token}` } : {},
         });
-        
         if (!userResponse.ok) throw new Error('Failed to fetch user data');
         const userData = await userResponse.json();
-        
-        // Fetch repositories
+
         const reposResponse = await fetch(`https://api.github.com/users/${username}/repos?per_page=100`, {
-          headers: token ? { 'Authorization': `token ${token}` } : {}
+          headers: token ? { Authorization: `token ${token}` } : {},
         });
-        
         if (!reposResponse.ok) throw new Error('Failed to fetch repositories');
         const reposData = await reposResponse.json();
-        
         const totalStars = reposData.reduce((sum, repo) => sum + repo.stargazers_count, 0);
-        
+
         setUserStats({
           repositories: userData.public_repos,
           stars: totalStars,
           followers: userData.followers,
-          following: userData.following
+          following: userData.following,
         });
-        
-        // Fetch real contribution data using GraphQL
+
         if (token) {
           await fetchContributionData();
         } else {
-          // Fallback to mock data if no token
-          const mockContributions = generateMockContributionData();
-          setContributionsData(mockContributions);
+          setContributionsData(generateMockContributionData());
         }
-        
-      } catch (err) {
+      } catch (err: any) {
         console.error('GitHub API Error:', err);
         setError(err.message);
-        // Fallback to mock data on error
-        const mockContributions = generateMockContributionData();
-        setContributionsData(mockContributions);
-        setUserStats({
-          repositories: 25,
-          stars: 50,
-          followers: 10,
-          following: 20
-        });
+        setContributionsData(generateMockContributionData());
+        setUserStats({ repositories: 25, stars: 50, followers: 10, following: 20 });
       } finally {
         setLoading(false);
       }
@@ -90,7 +73,6 @@ const GitHubCalendar: React.FC = () => {
           user(login: $username) {
             contributionsCollection {
               contributionCalendar {
-                totalContributions
                 weeks {
                   contributionDays {
                     contributionCount
@@ -108,40 +90,30 @@ const GitHubCalendar: React.FC = () => {
         const response = await fetch('https://api.github.com/graphql', {
           method: 'POST',
           headers: {
-            'Authorization': `bearer ${token}`,
+            Authorization: `bearer ${token}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            query,
-            variables: { username }
-          })
+          body: JSON.stringify({ query, variables: { username } }),
         });
 
         if (!response.ok) throw new Error('Failed to fetch contribution data');
-        
         const data = await response.json();
-        
-        if (data.errors) {
-          throw new Error(data.errors[0].message);
-        }
+
+        if (data.errors) throw new Error(data.errors[0].message);
 
         const weeks = data.data.user.contributionsCollection.contributionCalendar.weeks;
-        const contributionDays = weeks.flatMap(week => week.contributionDays);
-        
-        // Convert GitHub's contribution levels to our color scheme
-        const processedData = contributionDays.map(day => ({
+        const contributionDays = weeks.flatMap((week: any) => week.contributionDays);
+
+        const processedData = contributionDays.map((day: any) => ({
           date: day.date,
           contributions: day.contributionCount,
-          level: convertContributionLevel(day.contributionLevel)
+          level: convertContributionLevel(day.contributionLevel),
         }));
 
         setContributionsData(processedData);
-        
       } catch (err) {
         console.error('GraphQL Error:', err);
-        // Fallback to mock data
-        const mockContributions = generateMockContributionData();
-        setContributionsData(mockContributions);
+        setContributionsData(generateMockContributionData());
       }
     };
 
@@ -149,35 +121,38 @@ const GitHubCalendar: React.FC = () => {
   }, [token]);
 
   const convertContributionLevel = (githubLevel: string): number => {
-    // GitHub uses NONE, FIRST_QUARTILE, SECOND_QUARTILE, THIRD_QUARTILE, FOURTH_QUARTILE
     switch (githubLevel) {
-      case 'NONE': return 0;
-      case 'FIRST_QUARTILE': return 1;
-      case 'SECOND_QUARTILE': return 2;
-      case 'THIRD_QUARTILE': return 3;
-      case 'FOURTH_QUARTILE': return 4;
-      default: return 0;
+      case 'NONE':
+        return 0;
+      case 'FIRST_QUARTILE':
+        return 1;
+      case 'SECOND_QUARTILE':
+        return 2;
+      case 'THIRD_QUARTILE':
+        return 3;
+      case 'FOURTH_QUARTILE':
+        return 4;
+      default:
+        return 0;
     }
   };
 
   const generateMockContributionData = (): ContributionDay[] => {
-    const days = [];
+    const days: ContributionDay[] = [];
     const today = new Date();
     const startDate = new Date(today.getFullYear(), 0, 1);
-    
+
     for (let i = 0; i < 365; i++) {
       const date = new Date(startDate);
       date.setDate(startDate.getDate() + i);
-      
-      // Create more realistic contribution patterns
       const dayOfWeek = date.getDay();
       const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
       const baseActivity = isWeekend ? 0.3 : 0.7;
-      
+
       const activity = Math.random() * baseActivity;
       let level = 0;
       let contributions = 0;
-      
+
       if (activity > 0.6) {
         level = 4;
         contributions = Math.floor(Math.random() * 15) + 10;
@@ -191,11 +166,11 @@ const GitHubCalendar: React.FC = () => {
         level = 1;
         contributions = 1;
       }
-      
+
       days.push({
         date: date.toISOString().split('T')[0],
         level,
-        contributions
+        contributions,
       });
     }
     return days;
@@ -203,12 +178,18 @@ const GitHubCalendar: React.FC = () => {
 
   const getColorClass = (level: number): string => {
     switch (level) {
-      case 0: return 'bg-slate-800 border-slate-700';
-      case 1: return 'bg-green-900 border-green-800';
-      case 2: return 'bg-green-700 border-green-600';
-      case 3: return 'bg-green-500 border-green-400';
-      case 4: return 'bg-green-400 border-green-300';
-      default: return 'bg-slate-800 border-slate-700';
+      case 0:
+        return 'bg-slate-800 border-slate-700';
+      case 1:
+        return 'bg-green-900 border-green-800';
+      case 2:
+        return 'bg-green-700 border-green-600';
+      case 3:
+        return 'bg-green-500 border-green-400';
+      case 4:
+        return 'bg-green-400 border-green-300';
+      default:
+        return 'bg-slate-800 border-slate-700';
     }
   };
 
@@ -217,7 +198,7 @@ const GitHubCalendar: React.FC = () => {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
     });
   };
 
@@ -225,72 +206,50 @@ const GitHubCalendar: React.FC = () => {
     const weeks: (ContributionDay | null)[][] = [];
     const today = new Date();
     const startOfYear = new Date(today.getFullYear(), 0, 1);
-    
-    // Find the first Sunday of the year or before
     const firstSunday = new Date(startOfYear);
     const dayOfWeek = startOfYear.getDay();
-    if (dayOfWeek !== 0) {
-      firstSunday.setDate(startOfYear.getDate() - dayOfWeek);
-    }
-    
-    let currentWeek: (ContributionDay | null)[] = [];
+    if (dayOfWeek !== 0) firstSunday.setDate(startOfYear.getDate() - dayOfWeek);
+
     let currentDate = new Date(firstSunday);
-    
-    for (let i = 0; i < 53; i++) { // 53 weeks in a year
-      currentWeek = [];
-      
-      for (let j = 0; j < 7; j++) { // 7 days in a week
+
+    for (let i = 0; i < 53; i++) {
+      const currentWeek: (ContributionDay | null)[] = [];
+
+      for (let j = 0; j < 7; j++) {
         const dateStr = currentDate.toISOString().split('T')[0];
-        const dayData = data.find(day => day.date === dateStr);
-        
-        // Only include days that are in the current year
-        if (currentDate.getFullYear() === today.getFullYear()) {
-          currentWeek.push(dayData || null);
-        } else {
-          currentWeek.push(null);
-        }
-        
+        const dayData = data.find((day) => day.date === dateStr);
+        currentWeek.push(currentDate.getFullYear() === today.getFullYear() ? dayData || null : null);
         currentDate.setDate(currentDate.getDate() + 1);
       }
-      
+
       weeks.push(currentWeek);
     }
-    
+
     return weeks;
   };
 
   const getMonthLabels = (): string[] => {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
-                   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const today = new Date();
     const currentYear = today.getFullYear();
     const monthLabels: string[] = [];
-    
-    // Calculate approximate positions for month labels
+
     for (let i = 0; i < 12; i++) {
       const monthStart = new Date(currentYear, i, 1);
       const dayOfYear = Math.floor((monthStart.getTime() - new Date(currentYear, 0, 1).getTime()) / (1000 * 60 * 60 * 24));
       const weekOfYear = Math.floor(dayOfYear / 7);
-      
-      if (weekOfYear < 52) {
-        monthLabels[Math.min(weekOfYear, 11)] = months[i];
-      }
+      if (weekOfYear < 52) monthLabels[Math.min(weekOfYear, 11)] = months[i];
     }
-    
-    // Fill in empty slots
-    const result: string[] = [];
-    for (let i = 0; i < 12; i++) {
-      result.push(monthLabels[i] || '');
-    }
-    
-    return result;
+
+    return Array.from({ length: 12 }, (_, i) => monthLabels[i] || '');
   };
-    if (!contributionsData) return 0;
-    
+
+  const calculateLongestStreak = (data: ContributionDay[]): number => {
     let longestStreak = 0;
     let currentStreak = 0;
-    
-    contributionsData.forEach(day => {
+
+    data.forEach((day) => {
       if (day.contributions > 0) {
         currentStreak++;
         longestStreak = Math.max(longestStreak, currentStreak);
@@ -298,7 +257,7 @@ const GitHubCalendar: React.FC = () => {
         currentStreak = 0;
       }
     });
-    
+
     return longestStreak;
   };
 
@@ -314,13 +273,13 @@ const GitHubCalendar: React.FC = () => {
   }
 
   const totalContributions = contributionsData?.reduce((sum, day) => sum + day.contributions, 0) || 0;
-  const longestStreak = calculateLongestStreak(contributionsData);
+  const longestStreak = contributionsData ? calculateLongestStreak(contributionsData) : 0;
 
   const stats: StatItem[] = [
-    { icon: <GitCommit className="w-5 h-5" />, label: "Total Contributions", value: totalContributions.toString() },
-    { icon: <GitBranch className="w-5 h-5" />, label: "Repositories", value: userStats?.repositories.toString() || "0" },
-    { icon: <Star className="w-5 h-5" />, label: "Stars Earned", value: userStats?.stars.toString() || "0" },
-    { icon: <Calendar className="w-5 h-5" />, label: "Longest Streak", value: `${longestStreak} days` },
+    { icon: <GitCommit className="w-5 h-5" />, label: 'Total Contributions', value: totalContributions.toString() },
+    { icon: <GitBranch className="w-5 h-5" />, label: 'Repositories', value: userStats?.repositories.toString() || '0' },
+    { icon: <Star className="w-5 h-5" />, label: 'Stars Earned', value: userStats?.stars.toString() || '0' },
+    { icon: <Calendar className="w-5 h-5" />, label: 'Longest Streak', value: `${longestStreak} days` },
   ];
 
   return (
@@ -426,3 +385,4 @@ const GitHubCalendar: React.FC = () => {
 };
 
 export default GitHubCalendar;
+
