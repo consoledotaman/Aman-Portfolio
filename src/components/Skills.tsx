@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Code2, Globe, Database, Cpu } from 'lucide-react';
+import { Code2, Globe, Database, ChartNoAxesCombined} from 'lucide-react';
 
 const Skills = () => {
   const skillCategories = [
@@ -23,9 +23,9 @@ const Skills = () => {
       color: "from-purple-400 to-pink-400"
     },
     {
-      icon: <Cpu className="w-8 h-8" />,
-      title: "Blockchain & Others",
-      skills: ["Blockchain", "Web3", "Git", "Docker"],
+      icon: <ChartNoAxesCombined className="w-8 h-8" />,
+      title: "Digital Marketing",
+      skills: ["SEO", "Meta Ads", "Google Analytics", "Keyword Research"],
       color: "from-orange-400 to-red-400"
     }
   ];
