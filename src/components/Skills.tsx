@@ -32,9 +32,10 @@ const Skills = () => {
 
   const interests = [
     "Building new Web Technologies and Products",
-    "Blockchain and Web3 Development",
+    "Artificial Intelligence & Machine Learning",
     "Modern JavaScript Frameworks",
-    "Open Source Contributions"
+    "Open Source Contributions",
+    "Competitive Programming"
   ];
 
   return (

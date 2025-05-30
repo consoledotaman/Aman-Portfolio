@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Send, Github, Linkedin, Twitter } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, Github, Linkedin, Twitter ,Instagram} from 'lucide-react';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -27,14 +27,14 @@ const Contact = () => {
     {
       icon: <Mail className="w-5 h-5" />,
       label: "Email",
-      value: "aman@example.com",
-      href: "mailto:aman@example.com"
+      value: "raj.aman4001@gmail.com",
+      href: "mailto:raj.aman4001@gmail.com"
     },
     {
       icon: <Phone className="w-5 h-5" />,
       label: "Phone",
-      value: "+91 XXXXX XXXXX",
-      href: "tel:+91XXXXXXXXX"
+      value: "+91 8210694857",
+      href: "tel:+918210694857"
     },
     {
       icon: <MapPin className="w-5 h-5" />,
@@ -48,14 +48,20 @@ const Contact = () => {
     {
       icon: <Github className="w-5 h-5" />,
       label: "GitHub",
-      href: "https://github.com/amanraj",
+      href: "https://github.com/consoledotaman",
       color: "hover:bg-gray-700"
     },
     {
       icon: <Linkedin className="w-5 h-5" />,
       label: "LinkedIn",
-      href: "https://linkedin.com/in/amanraj",
+      href: "https://www.linkedin.com/in/aman-raj-1b2a8b326/",
       color: "hover:bg-blue-600"
+    },
+    {
+      icon: <Instagram className="w-5 h-5" />,
+      label: "Instagram",
+      href: "http://bit.ly/4mzKA49",
+      color: "hover:bg-blue-500"
     },
     {
       icon: <Twitter className="w-5 h-5" />,

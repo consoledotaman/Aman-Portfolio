@@ -4,25 +4,28 @@ import { ExternalLink, Github, Code } from 'lucide-react';
 
 const Projects = () => {
   const projects = [
-    {
-      title: "Web3 DApp Platform",
-      description: "A decentralized application platform built with React.js and Web3 technologies for blockchain interactions.",
-      tech: ["React.js", "Web3.js", "Solidity", "Node.js"],
-      color: "from-purple-400 to-pink-400"
-    },
-    {
-      title: "Modern E-commerce Solution",
-      description: "Full-stack e-commerce platform with Next.js, featuring real-time updates and secure payment integration.",
-      tech: ["Next.js", "MongoDB", "Stripe", "TypeScript"],
-      color: "from-blue-400 to-purple-400"
-    },
-    {
-      title: "Open Source Contribution",
-      description: "Active contributor to various open source projects, focusing on JavaScript libraries and React components.",
-      tech: ["JavaScript", "React", "Open Source", "Git"],
-      color: "from-green-400 to-blue-400"
-    }
-  ];
+  {
+    title: "Event & Media Production Company Website",
+    description: "Developed a full-fledged corporate website showcasing services, projects, and digital capabilities of a regional creative agency.",
+    tech: ["Html", "CSS", "Javascript", "Github"],
+    color: "from-purple-400 to-pink-400",
+    codeLink: "https://github.com/your-username/event-company-site",
+    liveLink: "https://event-company-site.vercel.app",
+    previewImage: "/mallardmarmot.png"
+  },
+  {
+    title: "Portfolio Website",
+    description: "A personal portfolio website built with React, showcasing my skills and projects with a clean, responsive design using Tailwind CSS, TypeScript, and Three.js.",
+    tech: ["React", "Tailwind CSS", "TypeScript", "Three.js"],
+    color: "from-green-400 to-blue-400",
+    
+    
+    codeLink: "https://github.com/consoledotaman/Aman-Portfolio",
+    liveLink: "https://amannraj.vercel.app",
+    previewImage: "/portfolio.png"
+  }
+];
+
 
   return (
     <section id="projects" className="py-20 px-4 sm:px-6 lg:px-8 bg-slate-900/50">
@@ -38,10 +41,12 @@ const Projects = () => {
           {projects.map((project, index) => (
             <div key={index} className="group">
               <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl overflow-hidden border border-slate-700 hover:border-purple-500 transition-all duration-300 hover:scale-105">
-                <div className={`h-48 bg-gradient-to-br ${project.color} relative overflow-hidden`}>
-                  <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                    <Code className="w-16 h-16 text-white/80" />
-                  </div>
+                <div className="h-48 bg-black/20 relative overflow-hidden">
+                  <img
+                    src={project.previewImage}
+                    alt={`${project.title} preview`}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                  />
                 </div>
                 
                 <div className="p-6">
@@ -57,14 +62,24 @@ const Projects = () => {
                   </div>
                   
                   <div className="flex space-x-3">
-                    <button className="flex items-center space-x-1 text-purple-400 hover:text-purple-300 transition-colors duration-200">
+                    <a
+                      href={project.codeLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center space-x-1 text-purple-400 hover:text-purple-300 transition-colors duration-200"
+                    >
                       <Github className="w-4 h-4" />
                       <span className="text-sm">Code</span>
-                    </button>
-                    <button className="flex items-center space-x-1 text-purple-400 hover:text-purple-300 transition-colors duration-200">
+                    </a>
+                    <a
+                      href={project.liveLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center space-x-1 text-purple-400 hover:text-purple-300 transition-colors duration-200"
+                    >
                       <ExternalLink className="w-4 h-4" />
                       <span className="text-sm">Live Demo</span>
-                    </button>
+                    </a>
                   </div>
                 </div>
               </div>
