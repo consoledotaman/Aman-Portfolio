@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ExternalLink, Github, Code } from 'lucide-react';
+import { ExternalLink, Github} from 'lucide-react';
 
 const Projects = () => {
   const projects = [
@@ -9,8 +9,8 @@ const Projects = () => {
     description: "Developed a full-fledged corporate website showcasing services, projects, and digital capabilities of a regional creative agency.",
     tech: ["Html", "CSS", "Javascript", "Github"],
     color: "from-purple-400 to-pink-400",
-    codeLink: "https://github.com/your-username/event-company-site",
-    liveLink: "https://event-company-site.vercel.app",
+    codeLink: "/",
+    liveLink: "https://mallardmarmot.vercel.app",
     previewImage: "/mallardmarmot.png"
   },
   {
@@ -18,8 +18,6 @@ const Projects = () => {
     description: "A personal portfolio website built with React, showcasing my skills and projects with a clean, responsive design using Tailwind CSS, TypeScript, and Three.js.",
     tech: ["React", "Tailwind CSS", "TypeScript", "Three.js"],
     color: "from-green-400 to-blue-400",
-    
-    
     codeLink: "https://github.com/consoledotaman/Aman-Portfolio",
     liveLink: "https://amannraj.vercel.app",
     previewImage: "/portfolio.png"
@@ -40,7 +38,7 @@ const Projects = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {projects.map((project, index) => (
             <div key={index} className="group">
-              <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl overflow-hidden border border-slate-700 hover:border-purple-500 transition-all duration-300 hover:scale-105">
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl overflow-hidden border border-slate-700 hover:border-purple-500 transition-all duration-300 hover:scale-105 " >
                 <div className="h-48 bg-black/20 relative overflow-hidden">
                   <img
                     src={project.previewImage}

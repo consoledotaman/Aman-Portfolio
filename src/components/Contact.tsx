@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Send, Github, Linkedin, Twitter ,Instagram} from 'lucide-react';
+import { AlertDialog,AlertDialogContent, AlertDialogTitle, AlertDialogDescription, AlertDialogAction } from "@/components/ui/alert-dialog";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -8,12 +9,14 @@ const Contact = () => {
     email: '',
     message: ''
   });
+  const [showDialog, setShowDialog] = useState(false); 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Form submitted:', formData);
-   
+    
     setFormData({ name: '', email: '', message: '' });
+    setShowDialog(true);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -185,6 +188,17 @@ const Contact = () => {
                 <Send className="w-4 h-4" />
               </button>
             </form>
+            <AlertDialog open={showDialog} onOpenChange={setShowDialog}>
+              <AlertDialogContent>
+                <AlertDialogTitle>Thank you!</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Your message has been sent successfully.
+                </AlertDialogDescription>
+                <div className="flex justify-end gap-2 mt-4">
+                  <AlertDialogAction onClick={() => setShowDialog(false)}>OK</AlertDialogAction>
+                </div>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
 
